@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-interface Movie {
+export interface Movie {
   id: number;
   title: string;
 }
@@ -14,14 +14,22 @@ export class MovieService {
   private idCounter = 3;
 
   // 하나의 무비 가져오기
-  getMovie(id: number) {
-    return this.movies.find((m) => {
-      m.id === id;
+  getMovie(id: number): number {
+    const movie: number = this.movies.findIndex((m) => {
+      m.id === +id;
     });
+
+    if (!movie) {
+      throw new NotFoundException('존재하지 않는 영화입니다.');
+    }
+
+    return movie;
   }
 
   // 무비 생성하기
   createMovie(title: string) {
-    return this.movies.push({ id: this.idCounter++, title });
+    const newMovie = this.movies.push({ id: this.idCounter++, title });
+
+    return newMovie;
   }
 }
