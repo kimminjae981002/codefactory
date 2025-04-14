@@ -19,4 +19,9 @@ export class MovieService {
       m.id === id;
     });
   }
+
+  // 무비 생성하기
+  createMovie(title: string) {
+    return this.movies.push({ id: this.idCounter++, title });
+  }
 }
