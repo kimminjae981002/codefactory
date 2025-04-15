@@ -13,10 +13,15 @@ export class MovieService {
 
   private idCounter = 3;
 
+  // 여러 개의 무비 가져오기
+  getMovies(): Movie[] {
+    return this.movies;
+  }
+
   // 하나의 무비 가져오기
-  getMovie(id: number): number {
-    const movie: number = this.movies.findIndex((m) => {
-      m.id === +id;
+  getMovie(id: number): Movie[] {
+    const movie: Movie[] = this.movies.filter((m) => {
+      return m.id === +id;
     });
 
     if (!movie) {
@@ -27,7 +32,7 @@ export class MovieService {
   }
 
   // 무비 생성하기
-  createMovie(title: string) {
+  createMovie(title: string): number {
     const newMovie = this.movies.push({ id: this.idCounter++, title });
 
     return newMovie;
