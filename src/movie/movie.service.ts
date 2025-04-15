@@ -33,8 +33,35 @@ export class MovieService {
 
   // 무비 생성하기
   createMovie(title: string): number {
-    const newMovie = this.movies.push({ id: this.idCounter++, title });
+    const newMovie: number = this.movies.push({ id: this.idCounter++, title });
 
     return newMovie;
+  }
+
+  // 무비 업데이트하기
+  updateMovie(id: number, title: string): Movie[] {
+    const movie = this.movies.find((v) => v.id === +id);
+
+    if (!movie) {
+      throw new NotFoundException('존재하지 않는 영화입니다.');
+    }
+
+    movie.title = title; // 직접 수정
+
+    return this.movies;
+  }
+
+  deleteMovie(id: number) {
+    const movie: number = this.movies.findIndex((v) => {
+      return v.id === +id;
+    });
+
+    if (movie === -1) {
+      throw new NotFoundException('존재하지 않는 영화입니다.');
+    }
+
+    this.movies.splice(movie, 1);
+
+    return this.movies;
   }
 }

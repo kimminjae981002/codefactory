@@ -1,5 +1,13 @@
 import { MovieService } from './movie.service';
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
 @Controller('movie')
 export class MovieController {
@@ -18,5 +26,15 @@ export class MovieController {
   @Post()
   createMovie(@Body('title') title: string) {
     return this.movieService.createMovie(title);
+  }
+
+  @Patch(':id')
+  updateMovie(@Param('id') id: number, @Body('title') title: string) {
+    return this.movieService.updateMovie(id, title);
+  }
+
+  @Delete(':id')
+  deleteMovie(@Param('id') id: number) {
+    return this.movieService.deleteMovie(id);
   }
 }
