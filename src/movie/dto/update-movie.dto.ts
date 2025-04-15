@@ -5,15 +5,20 @@ import {
   IsDate,
   IsDateString,
   IsDefined,
+  IsDivisibleBy,
   IsEmpty,
   IsEnum,
   IsIn,
   IsInt,
+  IsNegative,
   IsNotEmpty,
   IsNotIn,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  Max,
+  Min,
   NotEquals,
 } from 'class-validator';
 
@@ -90,4 +95,26 @@ export class UpdateMovieDto {
   // 날짜 스트링
   @IsDateString()
   test14: string;
+
+  // Number type
+
+  // 5로 나뉘어지는 것만
+  @IsDivisibleBy(5)
+  test15: number;
+
+  // 양수만
+  @IsPositive()
+  test16: number;
+
+  // 음수만
+  @IsNegative()
+  test17: number;
+
+  // 100 보다 작은 것만
+  @Min(100)
+  test18: number;
+
+  // 100 보다 큰 것만
+  @Max(100)
+  test19: number;
 }
