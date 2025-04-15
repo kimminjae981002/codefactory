@@ -1,3 +1,5 @@
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MovieService } from './movie.service';
 import {
   Body,
@@ -24,13 +26,13 @@ export class MovieController {
   }
 
   @Post()
-  createMovie(@Body('title') title: string) {
-    return this.movieService.createMovie(title);
+  createMovie(@Body() createMovieDto: CreateMovieDto) {
+    return this.movieService.createMovie(createMovieDto);
   }
 
   @Patch(':id')
-  updateMovie(@Param('id') id: number, @Body('title') title: string) {
-    return this.movieService.updateMovie(id, title);
+  updateMovie(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto) {
+    return this.movieService.updateMovie(id, updateMovieDto);
   }
 
   @Delete(':id')

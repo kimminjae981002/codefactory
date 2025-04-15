@@ -1,14 +1,17 @@
+import { UpdateMovieDto } from './dto/update-movie.dto';
+import { CreateMovieDto } from './dto/create-movie.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 export interface Movie {
   id: number;
   title: string;
+  genre: string;
 }
 @Injectable()
 export class MovieService {
   private movies: Movie[] = [
-    { id: 1, title: '해리포터' },
-    { id: 2, title: '반지의 제왕' },
+    { id: 1, title: '해리포터', genre: 'fantasy' },
+    { id: 2, title: '반지의 제왕', genre: 'romance' },
   ];
 
   private idCounter = 3;
@@ -32,21 +35,26 @@ export class MovieService {
   }
 
   // 무비 생성하기
-  createMovie(title: string): number {
-    const newMovie: number = this.movies.push({ id: this.idCounter++, title });
+  createMovie(createMovieDto: CreateMovieDto): number {
+    const newMovie: number = this.movies.push({
+      id: this.idCounter++,
+      title: createMovieDto.title,
+      genre: createMovieDto.genre,
+    });
 
     return newMovie;
   }
 
   // 무비 업데이트하기
-  updateMovie(id: number, title: string): Movie[] {
+  updateMovie(id: number, updateMovieDto: UpdateMovieDto): Movie[] {
     const movie = this.movies.find((v) => v.id === +id);
 
     if (!movie) {
       throw new NotFoundException('존재하지 않는 영화입니다.');
     }
 
-    movie.title = title; // 직접 수정
+    movie.title = updateMovieDto.title ?? movie.title;
+    movie.genre = updateMovieDto.genre ?? movie.genre;
 
     return this.movies;
   }
