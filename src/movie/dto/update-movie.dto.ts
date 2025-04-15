@@ -1,13 +1,17 @@
 import {
+  Contains,
   Equals,
+  IsAlphanumeric,
   IsArray,
   IsBoolean,
+  IsCreditCard,
   IsDate,
   IsDateString,
   IsDefined,
   IsDivisibleBy,
   IsEmpty,
   IsEnum,
+  IsHexColor,
   IsIn,
   IsInt,
   IsNegative,
@@ -18,7 +22,10 @@ import {
   IsPositive,
   IsString,
   Max,
+  MaxLength,
   Min,
+  MinLength,
+  NotContains,
   NotEquals,
 } from 'class-validator';
 
@@ -117,4 +124,36 @@ export class UpdateMovieDto {
   // 100 보다 큰 것만
   @Max(100)
   test19: number;
+
+  // String type
+
+  // 어디에 문자가 포함되어 있어야 한다.
+  @Contains('code')
+  test20: string;
+
+  // 어디에 문자가 포함되어 있으면 안된다.
+  @NotContains('code')
+  test21: string;
+
+  // 알파벳과 숫자로 이루어져있나
+  @IsAlphanumeric()
+  test22: string;
+
+  // 카드 형식을 맞추고 있나 0123-1523-1235-2314
+  @IsCreditCard()
+  test23: string;
+
+  // 16진수로 색깔을 컬러 #123456
+  @IsHexColor()
+  test24: string;
+
+  // 15글자가 최대이다.
+  @MaxLength(15)
+  test25: string;
+
+  // 15글자 보다 커야한다.
+  @MinLength(15)
+  test26: string;
+
+  //
 }
