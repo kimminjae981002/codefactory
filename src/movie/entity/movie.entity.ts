@@ -1,10 +1,9 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
-@Exclude() // 안 보이게
 export class Movie {
-  @Expose()
   id: number;
-
   title: string;
+
+  @Transform(({ value }) => value.toString().toUpperCase()) // genre 값 모두 대문자
   genre: string;
 }
