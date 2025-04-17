@@ -49,6 +49,8 @@ export class MovieService {
       id: this.idCounter++,
       title: createMovieDto.title,
       genre: createMovieDto.genre,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return newMovie;

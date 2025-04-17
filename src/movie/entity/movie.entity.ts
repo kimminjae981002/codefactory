@@ -1,9 +1,27 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
+@Entity()
 export class Movie {
+  @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
   title: string;
 
-  @Transform(({ value }) => value.toString().toUpperCase()) // genre 값 모두 대문자
+  @Column() // genre 값 모두 대문자
   genre: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
