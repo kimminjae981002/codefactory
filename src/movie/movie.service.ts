@@ -5,6 +5,7 @@ import { Movie } from './entity/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MovieDetail } from './entity/movie-detail.entity';
+import { Director } from 'src/director/entity/director.entity';
 
 @Injectable()
 export class MovieService {
@@ -13,6 +14,8 @@ export class MovieService {
     private readonly movieRepository: Repository<Movie>,
     @InjectRepository(MovieDetail)
     private readonly movieDetailRepository: Repository<MovieDetail>,
+    @InjectRepository(Director)
+    private readonly directorRepository: Repository<Director>,
   ) {}
 
   // 여러 개의 무비 가져오기
@@ -39,6 +42,14 @@ export class MovieService {
 
   // 무비 생성하기
   async createMovie(createMovieDto: CreateMovieDto) {
+    const director = await this.directorRepository.findOne({
+      where: { id: createMovieDto.directorId },
+    });
+
+    if (!director) {
+      throw new NotFoundException('존재하지 않는 감독입니다.');
+    }
+
     const movieDetail = await this.movieDetailRepository.save({
       detail: createMovieDto.detail,
     });
