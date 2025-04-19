@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 enum movieGenre {
   action = 'action',
@@ -8,15 +14,19 @@ enum movieGenre {
 export class UpdateMovieDto {
   // 없으면 안된다.
   @IsNotEmpty()
+  @IsString()
   title?: string;
 
-  // 있어도 되고 없어도 된다.
   @IsOptional()
-  genre?: string;
-
-  @IsOptional()
+  @IsString()
   detail?: string;
 
   @IsNotEmpty()
+  @IsNumber()
   directorId: number;
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  genreIds: number[];
 }
