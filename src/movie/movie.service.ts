@@ -13,8 +13,11 @@ export class MovieService {
   ) {}
 
   // 여러 개의 무비 가져오기
-  async getMovies(): Promise<Movie[]> {
-    return await this.movieRepository.find();
+  async getMovies() {
+    return [
+      await this.movieRepository.find(),
+      await this.movieRepository.count(),
+    ];
   }
 
   // 하나의 무비 가져오기
