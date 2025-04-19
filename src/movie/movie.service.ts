@@ -4,12 +4,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Movie } from './entity/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { MovieDetail } from './entity/movie-detail.entity';
 
 @Injectable()
 export class MovieService {
   constructor(
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
+    @InjectRepository(MovieDetail)
+    private readonly movieDetailRepository: Repository<MovieDetail>,
   ) {}
 
   // 여러 개의 무비 가져오기
@@ -34,13 +37,18 @@ export class MovieService {
   }
 
   // 무비 생성하기
-  async createMovie(createMovieDto: CreateMovieDto): Promise<void> {
-    await this.movieRepository.save({
+  async createMovie(createMovieDto: CreateMovieDto) {
+    const movieDetail = await this.movieDetailRepository.save({
+      detail: createMovieDto.detail,
+    });
+
+    const movie = await this.movieRepository.save({
       title: createMovieDto.title,
       genre: createMovieDto.genre,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      movieDetail: movieDetail,
     });
+
+    return movie;
   }
 
   // 무비 업데이트하기

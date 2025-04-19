@@ -2,22 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import { BaseEntity } from './base.entity';
+import { MovieDetail } from './movie-detail.entity';
 
-export class BaseEntity {
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @VersionColumn()
-  version: number;
-}
+// ManyToOne Director -> 감독은 여러 개 영화 생성
+// OneToOne MovieDetail -> 하나의 영화는 하나의 상세설명을 가짐
+// ManyToMany Genre - > 여러 개의 영화는 여러 개의 장르를 가질 수 있고, 여러 개 장르 또한 여러 개의 영화를 가질 수 있다.
 
 @Entity()
 export class Movie extends BaseEntity {
@@ -29,4 +26,8 @@ export class Movie extends BaseEntity {
 
   @Column()
   genre: string;
+
+  @OneToOne(() => MovieDetail)
+  @JoinColumn() // movie가 movieDetail을 갖고 있는다.
+  movieDetail: MovieDetail;
 }
