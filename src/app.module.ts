@@ -7,6 +7,7 @@ import { Movie } from './movie/entity/movie.entity';
 import { MovieDetail } from './movie/entity/movie-detail.entity';
 import { DirectorModule } from './director/director.module';
 import { Director } from './director/entity/director.entity';
+import { GenreModule } from './genre/genre.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Director } from './director/entity/director.entity';
     }),
     MovieModule,
     DirectorModule,
+    GenreModule,
   ],
   controllers: [],
   providers: [],
