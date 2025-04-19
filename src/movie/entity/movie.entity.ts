@@ -1,18 +1,17 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { MovieDetail } from './movie-detail.entity';
 import { Director } from 'src/director/entity/director.entity';
+import { Genre } from 'src/genre/entity/genre.entity';
 
 // ManyToOne Director -> 감독은 여러 개 영화 생성
 // OneToOne MovieDetail -> 하나의 영화는 하나의 상세설명을 가짐
@@ -26,9 +25,6 @@ export class Movie extends BaseEntity {
   @Column({ unique: true })
   title: string;
 
-  @Column()
-  genre: string;
-
   @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
     nullable: false,
   })
@@ -39,4 +35,8 @@ export class Movie extends BaseEntity {
     nullable: false,
   })
   director: Director;
+
+  @ManyToMany(() => Genre, (genre) => genre.movies, { nullable: false })
+  @JoinTable() // Movie & Genre 중간 테이블을 생성하기 위해 명시
+  genres: Genre[];
 }
