@@ -29,10 +29,14 @@ export class Movie extends BaseEntity {
   @Column()
   genre: string;
 
-  @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id)
+  @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
+    nullable: false,
+  })
   @JoinColumn() // movie가 movieDetail을 갖고 있는다.
   movieDetail: MovieDetail;
 
-  @ManyToOne(() => Director, (director) => director.id)
+  @ManyToOne(() => Director, (director) => director.id, {
+    nullable: false,
+  })
   director: Director;
 }

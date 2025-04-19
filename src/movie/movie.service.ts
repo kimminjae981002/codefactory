@@ -20,17 +20,17 @@ export class MovieService {
 
   // 여러 개의 무비 가져오기
   async getMovies() {
-    return [
-      await this.movieRepository.find(),
-      await this.movieRepository.count(),
-    ];
+    const movies = await this.movieRepository.findAndCount({
+      relations: ['director'],
+    });
+    return movies;
   }
 
   // 하나의 무비 가져오기
   async getMovie(id: number): Promise<Movie> {
     const movie: Movie | null = await this.movieRepository.findOne({
       where: { id },
-      relations: ['movieDetail'],
+      relations: ['movieDetail', 'director'],
     });
 
     if (!movie) {
@@ -58,6 +58,7 @@ export class MovieService {
       title: createMovieDto.title,
       genre: createMovieDto.genre,
       movieDetail: movieDetail,
+      director: { id: createMovieDto.directorId },
     });
 
     return movie;
