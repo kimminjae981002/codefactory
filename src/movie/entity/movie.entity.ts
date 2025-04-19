@@ -6,7 +6,19 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from 'typeorm';
+
+export class BaseEntity {
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @VersionColumn()
+  version: number;
+}
 
 @Entity()
 export class Movie {
@@ -16,12 +28,9 @@ export class Movie {
   @Column()
   title: string;
 
-  @Column() // genre 값 모두 대문자
+  @Column()
   genre: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column(() => BaseEntity)
+  base: BaseEntity;
 }
