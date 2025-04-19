@@ -1,33 +1,4 @@
-import {
-  Contains,
-  Equals,
-  IsAlphanumeric,
-  IsArray,
-  IsBoolean,
-  IsCreditCard,
-  IsDate,
-  IsDateString,
-  IsDefined,
-  IsDivisibleBy,
-  IsEmpty,
-  IsEnum,
-  IsHexColor,
-  IsIn,
-  IsInt,
-  IsNegative,
-  IsNotEmpty,
-  IsNotIn,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-  NotContains,
-  NotEquals,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 enum movieGenre {
   action = 'action',
@@ -35,8 +6,6 @@ enum movieGenre {
 }
 
 export class UpdateMovieDto {
-  // basic
-
   // 없으면 안된다.
   @IsNotEmpty()
   title?: string;
@@ -44,4 +13,7 @@ export class UpdateMovieDto {
   // 있어도 되고 없어도 된다.
   @IsOptional()
   genre?: string;
+
+  @IsOptional()
+  detail?: string;
 }
