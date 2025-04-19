@@ -64,19 +64,27 @@ export class MovieService {
   }
 
   // 무비 업데이트하기
-  async updateMovie(id: number, updateMovieDto: UpdateMovieDto): Promise<void> {
-    const { detail, ...movieRest } = updateMovieDto;
+  async updateMovie(id: number, updateMovieDto: UpdateMovieDto) {
+    const { detail, directorId, ...movieRest } = updateMovieDto;
+
+    const director = await this.directorRepository.findOne({
+      where: { id: directorId },
+    });
+
+    if (!director) {
+      throw new NotFoundException('존재하지 않는 감독입니다.');
+    }
 
     const movie: Movie | null = await this.movieRepository.findOne({
       where: { id },
-      relations: ['movieDetail'],
+      relations: ['movieDetail', 'director'],
     });
 
     if (!movie) {
       throw new NotFoundException('존재하지 않는 영화입니다.');
     }
 
-    await this.movieRepository.update({ id }, { ...movieRest });
+    await this.movieRepository.update({ id }, { ...movieRest, director });
 
     // 만약 detail이 존재하면 movieDetail을 업데이트 한다.
     if (detail) {
@@ -85,6 +93,8 @@ export class MovieService {
         { detail },
       );
     }
+
+    return movie;
   }
 
   async deleteMovie(id: number): Promise<void> {
