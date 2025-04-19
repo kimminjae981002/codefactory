@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { MovieDetail } from './movie-detail.entity';
+import { Director } from 'src/director/entity/director.entity';
 
 // ManyToOne Director -> 감독은 여러 개 영화 생성
 // OneToOne MovieDetail -> 하나의 영화는 하나의 상세설명을 가짐
@@ -30,4 +32,7 @@ export class Movie extends BaseEntity {
   @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id)
   @JoinColumn() // movie가 movieDetail을 갖고 있는다.
   movieDetail: MovieDetail;
+
+  @ManyToOne(() => Director, (director) => director.id)
+  director: Director;
 }
