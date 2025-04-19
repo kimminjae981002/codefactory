@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from '../../common/entity/base.entity';
 import { MovieDetail } from './movie-detail.entity';
 
 // ManyToOne Director -> 감독은 여러 개 영화 생성
