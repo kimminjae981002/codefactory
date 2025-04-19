@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { Movie } from './movie/entity/movie.entity';
 import { MovieDetail } from './movie/entity/movie-detail.entity';
+import { DirectorModule } from './director/director.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MovieDetail } from './movie/entity/movie-detail.entity';
       inject: [ConfigService],
     }),
     MovieModule,
+    DirectorModule,
   ],
   controllers: [],
   providers: [],
