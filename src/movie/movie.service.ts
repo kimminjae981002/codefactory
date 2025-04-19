@@ -79,6 +79,7 @@ export class MovieService {
   async deleteMovie(id: number): Promise<void> {
     const movie: Movie | null = await this.movieRepository.findOne({
       where: { id },
+      relations: ['movieDetail'],
     });
 
     if (!movie) {
@@ -86,5 +87,7 @@ export class MovieService {
     }
 
     await this.movieRepository.delete(id);
+
+    await this.movieDetailRepository.delete(movie.movieDetail.id);
   }
 }

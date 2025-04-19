@@ -10,6 +10,6 @@ export class MovieDetail extends BaseEntity {
   @Column()
   detail: string;
 
-  @OneToOne(() => Movie)
+  @OneToOne(() => Movie, (movie) => movie.id)
   movie: Movie;
 }
