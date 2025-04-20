@@ -5,7 +5,7 @@ export class UpdateDirectorDto {
   @IsString()
   name: string;
   @IsNotEmpty()
-  @IsDate()
+  @IsString()
   dob: Date;
   @IsNotEmpty()
   @IsString()

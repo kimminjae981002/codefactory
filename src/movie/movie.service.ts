@@ -103,66 +103,80 @@ export class MovieService {
 
   // 무비 업데이트하기
   async updateMovie(id: number, updateMovieDto: UpdateMovieDto) {
-    const { detail, directorId, genreIds, ...movieRest } = updateMovieDto;
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction(); // startTransaction() 격리 수준 설정 가능
+    try {
+      const { detail, directorId, genreIds, title } = updateMovieDto;
 
-    const director = await this.directorRepository.findOne({
-      where: { id: directorId },
-    });
+      const director = await qr.manager.findOne(Director, {
+        where: { id: directorId },
+      });
 
-    if (!director) {
-      throw new NotFoundException('존재하지 않는 감독입니다.');
+      if (!director) {
+        throw new NotFoundException('존재하지 않는 감독입니다.');
+      }
+
+      // 업데이트 할 장르들을 저장한다.
+      let newGenres;
+
+      // genreIds 여러 개를 찾아온다.
+      const genres = await qr.manager.find(Genre, {
+        where: { id: In(genreIds) },
+      });
+
+      if (genres.length !== genreIds.length) {
+        throw new NotFoundException(
+          `존재하지 않는 장르가 있습니다. 존재하는 ids -> ${genres.map((genre) => genre.id)}`,
+        );
+      }
+
+      newGenres = genres;
+
+      const movie: Movie | null = await qr.manager.findOne(Movie, {
+        where: { id },
+        relations: ['movieDetail', 'director', 'genres'],
+      });
+
+      if (!movie) {
+        throw new NotFoundException('존재하지 않는 영화입니다.');
+      }
+
+      await qr.manager.update(Movie, { id }, { title, director });
+
+      // 만약 detail이 존재하면 movieDetail을 업데이트 한다.
+      if (detail) {
+        await qr.manager.update(
+          MovieDetail,
+          { id: movie.movieDetail.id },
+          { detail },
+        );
+      }
+
+      const newMovie: Movie | null = await qr.manager.findOne(Movie, {
+        where: { id },
+        relations: ['movieDetail', 'director', 'genres'],
+      });
+
+      if (!newMovie) {
+        throw new NotFoundException('존재하지 않는 영화입니다.');
+      }
+
+      // 업데이트 된 장르들을 다시 저장해준다. (업데이트 기능에 적용이 안 된다.)
+      newMovie.genres = newGenres;
+
+      await qr.manager.save(Movie, newMovie);
+
+      await qr.commitTransaction();
+
+      return movie;
+    } catch (error) {
+      await qr.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await qr.release();
     }
-
-    // 업데이트 할 장르들을 저장한다.
-    let newGenres;
-
-    // genreIds 여러 개를 찾아온다.
-    const genres = await this.genreRepository.find({
-      where: { id: In(genreIds) },
-    });
-
-    if (genres.length !== genreIds.length) {
-      throw new NotFoundException(
-        `존재하지 않는 장르가 있습니다. 존재하는 ids -> ${genres.map((genre) => genre.id)}`,
-      );
-    }
-
-    newGenres = genres;
-
-    const movie: Movie | null = await this.movieRepository.findOne({
-      where: { id },
-      relations: ['movieDetail', 'director', 'genres'],
-    });
-
-    if (!movie) {
-      throw new NotFoundException('존재하지 않는 영화입니다.');
-    }
-
-    await this.movieRepository.update({ id }, { ...movieRest, director });
-
-    // 만약 detail이 존재하면 movieDetail을 업데이트 한다.
-    if (detail) {
-      await this.movieDetailRepository.update(
-        { id: movie.movieDetail.id },
-        { detail },
-      );
-    }
-
-    const newMovie: Movie | null = await this.movieRepository.findOne({
-      where: { id },
-      relations: ['movieDetail', 'director', 'genres'],
-    });
-
-    if (!newMovie) {
-      throw new NotFoundException('존재하지 않는 영화입니다.');
-    }
-
-    // 업데이트 된 장르들을 다시 저장해준다. (업데이트 기능에 적용이 안 된다.)
-    newMovie.genres = newGenres;
-
-    await this.movieRepository.save(newMovie);
-
-    return movie;
   }
 
   async deleteMovie(id: number): Promise<void> {
