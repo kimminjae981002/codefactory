@@ -22,14 +22,17 @@ export class MovieService {
   ) {}
 
   // 여러 개의 무비 가져오기
-  async getMovies() {
-    const movies = await this.movieRepository
+  async getMovies(title?: string) {
+    const qb = this.movieRepository
       .createQueryBuilder('movie')
       .leftJoinAndSelect('movie.director', 'director')
-      .leftJoinAndSelect('movie.genres', 'genres')
-      .getMany();
+      .leftJoinAndSelect('movie.genres', 'genres');
 
-    return movies;
+    if (title) {
+      qb.where('movie.title LIKE :title', { title: `%${title}%` });
+    }
+
+    return await qb.getManyAndCount();
   }
 
   // 하나의 무비 가져오기

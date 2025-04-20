@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 
@@ -19,8 +20,8 @@ export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Get()
-  getMovies() {
-    return this.movieService.getMovies();
+  getMovies(@Query('title') title: string) {
+    return this.movieService.getMovies(title);
   }
 
   @Get(':id')
