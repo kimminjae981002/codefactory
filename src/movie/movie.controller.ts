@@ -6,6 +6,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
@@ -37,6 +38,7 @@ export class MovieController {
       }),
     )
     id: number,
+    @Query('test', new DefaultValuePipe(10)) test: number,
   ) {
     return this.movieService.getMovie(id);
   }
