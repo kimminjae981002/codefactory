@@ -23,9 +23,12 @@ export class MovieService {
 
   // 여러 개의 무비 가져오기
   async getMovies() {
-    const movies = await this.movieRepository.findAndCount({
-      relations: ['director', 'genres'],
-    });
+    const movies = await this.movieRepository
+      .createQueryBuilder('movie')
+      .leftJoinAndSelect('movie.director', 'director')
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .getMany();
+
     return movies;
   }
 
