@@ -38,7 +38,6 @@ export class MovieController {
       }),
     )
     id: number,
-    @Query('test', new DefaultValuePipe(10)) test: number,
   ) {
     return this.movieService.getMovie(id);
   }
@@ -49,12 +48,33 @@ export class MovieController {
   }
 
   @Patch(':id')
-  updateMovie(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto) {
+  updateMovie(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        exceptionFactory(error) {
+          throw new BadRequestException('숫자를 입력해주세요.');
+        },
+      }),
+    )
+    id: number,
+    @Body() updateMovieDto: UpdateMovieDto,
+  ) {
     return this.movieService.updateMovie(id, updateMovieDto);
   }
 
   @Delete(':id')
-  deleteMovie(@Param('id') id: number) {
+  deleteMovie(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        exceptionFactory(error) {
+          throw new BadRequestException('숫자를 입력해주세요.');
+        },
+      }),
+    )
+    id: number,
+  ) {
     return this.movieService.deleteMovie(id);
   }
 }
