@@ -16,6 +16,7 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
+import { MovieTitleValidationPipe } from './pipe/movie-title-validation.pipe';
 
 @Controller('movie')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,7 +24,7 @@ export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Get()
-  getMovies(@Query('title') title: string) {
+  getMovies(@Query('title', MovieTitleValidationPipe) title: string) {
     return this.movieService.getMovies(title);
   }
 
