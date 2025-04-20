@@ -37,10 +37,12 @@ export class MovieService {
 
   // 하나의 무비 가져오기
   async getMovie(id: number): Promise<Movie> {
-    const movie: Movie | null = await this.movieRepository.findOne({
-      where: { id },
-      relations: ['movieDetail', 'director', 'genres'],
-    });
+    const movie = await this.movieRepository
+      .createQueryBuilder('movie')
+      .leftJoinAndSelect('movie.director', 'director')
+      .leftJoinAndSelect('movie.genres', 'genres')
+      .where('movie.id = :id', { id })
+      .getOne();
 
     if (!movie) {
       throw new NotFoundException('존재하지 않는 영화입니다.');
