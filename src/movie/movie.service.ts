@@ -117,6 +117,10 @@ export class MovieService {
         throw new NotFoundException('존재하지 않는 감독입니다.');
       }
 
+      if (!genreIds) {
+        throw new NotFoundException('장르 ID를 찾을 수 없습니다.');
+      }
+
       // 업데이트 할 장르들을 저장한다.
       let newGenres;
 
