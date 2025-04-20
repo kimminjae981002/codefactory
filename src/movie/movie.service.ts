@@ -3,7 +3,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Movie } from './entity/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { MovieDetail } from './entity/movie-detail.entity';
 import { Director } from 'src/director/entity/director.entity';
 import { Genre } from 'src/genre/entity/genre.entity';
@@ -19,6 +19,7 @@ export class MovieService {
     private readonly directorRepository: Repository<Director>,
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
+    private readonly dataSource: DataSource,
   ) {}
 
   // 여러 개의 무비 가져오기
@@ -53,37 +54,51 @@ export class MovieService {
 
   // 무비 생성하기
   async createMovie(createMovieDto: CreateMovieDto) {
-    const director = await this.directorRepository.findOne({
-      where: { id: createMovieDto.directorId },
-    });
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction(); // startTransaction() 격리 수준 설정 가능
 
-    if (!director) {
-      throw new NotFoundException('존재하지 않는 감독입니다.');
+    try {
+      const director = await qr.manager.findOne(Director, {
+        where: { id: createMovieDto.directorId },
+      });
+
+      if (!director) {
+        throw new NotFoundException('존재하지 않는 감독입니다.');
+      }
+
+      // genreIds 여러 개를 찾아온다.
+      const genres = await qr.manager.find(Genre, {
+        where: { id: In(createMovieDto.genreIds) },
+      });
+
+      if (genres.length !== createMovieDto.genreIds.length) {
+        throw new NotFoundException(
+          `존재하지 않는 장르가 있습니다. 존재하는 ids -> ${genres.map((genre) => genre.id)}`,
+        );
+      }
+
+      const movieDetail = await qr.manager.save(MovieDetail, {
+        detail: createMovieDto.detail,
+      });
+
+      const movie = await qr.manager.save(Movie, {
+        title: createMovieDto.title,
+        movieDetail: movieDetail,
+        director: { id: createMovieDto.directorId },
+        genres,
+      });
+
+      await qr.commitTransaction(); // 트랜잭션 Commit 데이터베이스에 반영
+
+      return movie;
+    } catch (error) {
+      await qr.rollbackTransaction(); // 에러 사항 생기면 전체 복구
+
+      throw error;
+    } finally {
+      await qr.release(); // 꼭 실행
     }
-
-    // genreIds 여러 개를 찾아온다.
-    const genres = await this.genreRepository.find({
-      where: { id: In(createMovieDto.genreIds) },
-    });
-
-    if (genres.length !== createMovieDto.genreIds.length) {
-      throw new NotFoundException(
-        `존재하지 않는 장르가 있습니다. 존재하는 ids -> ${genres.map((genre) => genre.id)}`,
-      );
-    }
-
-    const movieDetail = await this.movieDetailRepository.save({
-      detail: createMovieDto.detail,
-    });
-
-    const movie = await this.movieRepository.save({
-      title: createMovieDto.title,
-      movieDetail: movieDetail,
-      director: { id: createMovieDto.directorId },
-      genres,
-    });
-
-    return movie;
   }
 
   // 무비 업데이트하기
