@@ -10,6 +10,7 @@ import { Director } from './director/entity/director.entity';
 import { GenreModule } from './genre/genre.module';
 import { Genre } from './genre/entity/genre.entity';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UserModule } from './user/user.module';
     DirectorModule,
     GenreModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
