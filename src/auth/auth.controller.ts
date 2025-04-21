@@ -4,7 +4,7 @@ import { Controller, Post, Headers } from '@nestjs/common';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post()
+  @Post('signUp')
   async signUp(@Headers('authorization') token: string) {
     return await this.authService.signUp(token);
   }

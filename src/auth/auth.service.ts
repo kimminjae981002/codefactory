@@ -34,7 +34,7 @@ export class AuthService {
     const tokenSplit = decoded.split(':');
 
     if (tokenSplit.length != 2) {
-      throw new BadRequestException('토큰 포맨이 잘못되었습니다.');
+      throw new BadRequestException('토큰 포맷이 잘못되었습니다.');
     }
 
     const [email, password] = tokenSplit;
