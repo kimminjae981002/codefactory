@@ -8,4 +8,9 @@ export class AuthController {
   async signUp(@Headers('authorization') token: string) {
     return await this.authService.signUp(token);
   }
+
+  @Post('login')
+  async login(@Headers('authorization') token: string) {
+    return await this.authService.login(token);
+  }
 }
