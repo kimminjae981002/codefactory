@@ -20,8 +20,8 @@ export class AuthController {
   @Post('login/passport')
   async loginUsePassport(@Request() req) {
     return {
-      refreshToken: this.authService.issueToken(req.user, true),
-      accessToken: this.authService.issueToken(req.user, false),
+      refreshToken: await this.authService.issueToken(req.user, true),
+      accessToken: await this.authService.issueToken(req.user, false),
     };
   }
 }

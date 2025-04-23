@@ -82,7 +82,8 @@ export class AuthService {
     const accessTokenSecret = this.configService.get<string>(
       'ACCESS_TOKEN_SECRET',
     );
-    refreshToken: await this.jwtService.signAsync(
+
+    return await this.jwtService.signAsync(
       {
         sub: user.id,
         role: user.role,
@@ -115,14 +116,6 @@ export class AuthService {
     const { email, password } = await this.parseBasicToken(rawToken);
 
     const user = await this.validate(email, password);
-
-    const refreshTokenSecret = this.configService.get<string>(
-      'REFRESH_TOKEN_SECRET',
-    );
-
-    const accessTokenSecret = this.configService.get<string>(
-      'ACCESS_TOKEN_SECRET',
-    );
 
     return {
       refreshToken: await this.issueToken(user, true),
