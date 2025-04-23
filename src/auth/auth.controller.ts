@@ -1,7 +1,15 @@
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { Controller, Post, Headers, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Headers,
+  Request,
+  UseGuards,
+  Get,
+} from '@nestjs/common';
 import { LocalAuthGuard } from './strategy/local.strategy';
+import { JwtAuthGuard } from './strategy/jwt.strategy';
 
 @Controller('auth')
 export class AuthController {
@@ -23,5 +31,11 @@ export class AuthController {
       refreshToken: await this.authService.issueToken(req.user, true),
       accessToken: await this.authService.issueToken(req.user, false),
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('private')
+  async private(@Request() req) {
+    return req.user;
   }
 }
